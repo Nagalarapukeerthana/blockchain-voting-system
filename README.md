@@ -74,3 +74,5 @@ To deploy this application to Render:
    - Add `GROQ_API_KEY` with your Groq API token.
    - Add `FLASK_SECRET_KEY` with a strong random string (e.g. `openssl rand -hex 24`).
 5. **Deploy**: Deploy the service. Render will build and launch your application.
+## 🚀 Live Demo
+https://blockchain-voting-system-xc7q.onrender.com
