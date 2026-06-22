@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSecure Blockchain Voting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo-section">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <span class="logo-text">CYBERSECURE VOTE</span>
+            </div>
+            <nav class="nav-links">
+                <a href="{{ url_for('vote_page') }}" class="active">Vote Portal</a>
+                <a href="{{ url_for('admin_page') }}">Admin Panel</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="vote-layout">
+            <div class="cyber-card">
+                <div class="system-badge">
+                    <span class="badge-pulse"></span>
+                    <span>BLOCKCHAIN CONSENSUS SECURED</span>
+                </div>
+                
+                <div class="title-center">
+                    <h1>Secure Voting Portal</h1>
+                    <p>Cast your selection to the decentralized election ledger. AI Fraud Detection is active.</p>
+                </div>
+
+                <form id="voteForm" autocomplete="off">
+                    <div class="form-group">
+                        <label for="voter_id">Voter Identification Key (ID)</label>
+                        <input type="text" id="voter_id" name="voter_id" class="input-cyber" 
+                               placeholder="e.g., VOTER-829A-91K" required minlength="4" maxlength="24">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="candidate">Choose Candidate</label>
+                        <select id="candidate" name="candidate" class="input-cyber select-cyber" required>
+                            <option value="" disabled selected>-- Select Candidate --</option>
+                            <option value="Candidate A">Candidate A (Global Alliance)</option>
+                            <option value="Candidate B">Candidate B (Progressive Union)</option>
+                            <option value="Candidate C">Candidate C (Independent Liberty)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="submitVoteBtn" class="btn-cyber">
+                        <i class="fa-solid fa-fingerprint"></i> Cast Vote Securely
+                    </button>
+                </form>
+
+                <!-- Alerts & Feedbacks -->
+                <div id="voteAlert" class="alert-box"></div>
+
+                <!-- AI Fraud Audit Report -->
+                <div id="aiReport" class="ai-report">
+                    <div class="ai-report-title">
+                        <i class="fa-solid fa-brain"></i> Real-time AI Security Audit Report
+                    </div>
+                    <div class="report-grid">
+                        <div class="report-label">Audit Decision:</div>
+                        <div class="report-value" id="aiStatus">APPROVED</div>
+
+                        <div class="report-label">Fraud Score:</div>
+                        <div class="report-value">
+                            <span id="aiScore" class="fraud-score-badge">0.05</span>
+                        </div>
+
+                        <div class="report-label">Threat Analysis:</div>
+                        <div class="report-value" id="aiExplanation">Analyzing...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

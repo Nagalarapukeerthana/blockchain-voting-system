@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CyberSecure Blockchain Voting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo-section">
+                <i class="fa-solid fa-user-shield logo-icon"></i>
+                <span class="logo-text">SECURE VOTE ADMIN</span>
+            </div>
+            <nav class="nav-links">
+                <a href="{{ url_for('vote_page') }}">Vote Portal</a>
+                <a href="{{ url_for('admin_page') }}" class="active">Admin Panel</a>
+                {% if logged_in %}
+                <a href="{{ url_for('admin_logout') }}" class="logout-btn">Logout ({{ username }})</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% if not logged_in %}
+        <!-- AUTHENTICATION CARD (LOGIN / REGISTRATION) -->
+        <div class="auth-layout">
+            <div class="cyber-card">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchAuthTab('login')">Admin Login</button>
+                    <button class="auth-tab" onclick="switchAuthTab('register')">Register Officer</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="login_username">Username</label>
+                        <input type="text" id="login_username" name="username" class="input-cyber" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login_password">Password</label>
+                        <input type="password" id="login_password" name="password" class="input-cyber" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn-cyber">Authenticate</button>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="registerForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="reg_username">Username</label>
+                        <input type="text" id="reg_username" name="username" class="input-cyber" placeholder="Choose username" required minlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_password">Password</label>
+                        <input type="password" id="reg_password" name="password" class="input-cyber" placeholder="Choose password" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn-cyber">Register Admin</button>
+                </form>
+
+                <div id="authAlert" class="alert-box"></div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- ADMIN DASHBOARD PANEL -->
+        <div class="dashboard-header">
+            <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                Election Security & Audit Console
+            </h2>
+        </div>
+
+        <!-- Metrics cards grid -->
+        <div class="dashboard-grid">
+            <div class="metric-card">
+                <span class="metric-label">Total Votes Cast</span>
+                <span class="metric-value" id="metricTotalVotes">0</span>
+            </div>
+            
+            <div class="metric-card">
+                <span class="metric-label">Ledger Integrity</span>
+                <span class="metric-status" id="metricLedgerIntegrity">
+                    <i class="fa-solid fa-circle-check" style="color: var(--status-approved);"></i> Secure
+                </span>
+            </div>
+
+            <div class="metric-card">
+                <span class="metric-label">Security Alerts</span>
+                <span class="metric-status" id="metricSecurityAlerts">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: var(--status-approved);"></i> None
+                </span>
+            </div>
+
+            <div class="metric-card">
+                <span class="metric-label">AI Status</span>
+                <span class="metric-status">
+                    <i class="fa-solid fa-brain" style="color: var(--accent-cyan);"></i> Llama 3 Active
+                </span>
+            </div>
+        </div>
+
+        <!-- Charts and Blockchain visualizer split -->
+        <div class="dashboard-charts">
+            <!-- Left: Vote Breakdown Chart -->
+            <div class="cyber-card" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--accent-cyan); text-transform: uppercase;">
+                    Candidate Standings
+                </h3>
+                <div style="position: relative; width: 100%; height: 220px; display: flex; justify-content: center; align-items: center;">
+                    <canvas id="voteBreakdownChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right: Blockchain Visualizer Explorer -->
+            <div class="blockchain-visualizer">
+                <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--accent-cyan); text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;">
+                    <span>Decentralized Ledger (Blocks)</span>
+                    <button class="btn-cyber" onclick="refreshDashboard()" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; width: auto;">
+                        <i class="fa-solid fa-rotate"></i> Sync
+                    </button>
+                </h3>
+                <div class="block-chain-container" id="blockchainContainer">
+                    <!-- Blocks injected dynamically via script.js -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Security Logs Console -->
+        <div class="audit-console">
+            <div class="console-header">
+                <h3 style="font-size: 1rem; color: var(--accent-cyan); text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-terminal"></i> Security Audit Log Console
+                </h3>
+                <span style="font-size: 0.75rem; color: var(--text-secondary);">Refreshes automatically</span>
+            </div>
+            
+            <div class="console-table-container">
+                <table class="console-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Voter ID</th>
+                            <th>IP Address</th>
+                            <th>Fraud Score</th>
+                            <th>Status</th>
+                            <th>Threat Audit Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditLogsBody">
+                        <!-- Logs injected dynamically via script.js -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
